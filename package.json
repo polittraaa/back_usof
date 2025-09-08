@@ -1,0 +1,34 @@
+{
+  "name": "usof_hpi",
+  "version": "1.0.0",
+  "description": "Recreation of stackowerflow as part of the khpi education marathon program",
+  "main": "index_probe.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index_probe.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/polittraaa/usof_hpi.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/polittraaa/usof_hpi/issues"
+  },
+  "homepage": "https://github.com/polittraaa/usof_hpi#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "knex": "^3.1.0",
+    "mysql2": "^3.14.4",
+    "nodemon": "^3.1.10"
+  },
+  "type": "module"
+}
