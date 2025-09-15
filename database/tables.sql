@@ -1,7 +1,7 @@
 USE usof_db
 
 CREATE TABLE users (
-    users_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
     login VARCHAR(50) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE posts (
     content TEXT NOT NULL,
     image_url VARCHAR(255), 
     publish_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (author_id) REFERENCES users(users_id) ON DELETE CASCADE
+    FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE categories (
@@ -44,7 +44,7 @@ CREATE TABLE comments (
     author_id INT NOT NULL,
     publish_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     content TEXT NOT NULL,
-    FOREIGN KEY (author_id) REFERENCES users(users_id) ON DELETE CASCADE
+    FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE likes (
@@ -54,5 +54,5 @@ CREATE TABLE likes (
     target_type ENUM('post', 'comment') NOT NULL,
     target_id INT NOT NULL,
     like_type ENUM('like', 'dislike'),
-    FOREIGN KEY (author_id) REFERENCES users(users_id) ON DELETE CASCADE
+    FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE CASCADE
 );

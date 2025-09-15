@@ -1,11 +1,9 @@
-// /login --> post = success/fail
-import User from "../../models/user.js";
-
-async function handleLogin(req, res, db, bcrypt) {
+async function handleLogin(req, res, db, bcrypt, User) {
     const { email, login, password } = req.body;
     const userModel = new User(db);
     
     try{
+        //prof the email confirm 
         const user = await userModel.find_user(email, login);
 
         if (!user) {
@@ -17,12 +15,13 @@ async function handleLogin(req, res, db, bcrypt) {
             if (!match) {
                  return res.status(400).json({ error: 'Invalid email/login or password' });
             }
-            req.session.userId = user.id;
+            req.session.userId = user.user_id;
             req.session.visited = true;
-        
+            //console.log(`session ${req.session.userId}`);
+
             res.status(200).json({
                 message: 'Login successful',
-                user: { id: user.id, login: user.login, email: user.email, role: user.role }
+                user: { user_id: user.id, login: user.login, email: user.email, role: user.role }
             });
         }
     } catch(err){

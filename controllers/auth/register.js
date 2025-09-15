@@ -1,47 +1,42 @@
-import User from "../../models/user.js";
+import sendEmail from "../../additional_func/send_email.js"
 
-async function handleRegister(req, res, db, bcrypt) {
+async function handleRegister(req, res, db, bcrypt, jwt, User) {
    const {email, login, password, password_confirm, name} = req.body;
    const saltRounds = 10;
    const moduleUser = new User(db);
+   const SECRET = process.env.TOKEN_SECRET;
+   const PORT = process.env.SERVER_PORT;
+   const token = jwt.sign({email}, SECRET, {expiresIn: "20m"});
+   const link = `http://localhost:${PORT}/api/auth/confirm/${token}`
+
     try{
         if(password != password_confirm){
-            res.status(500).json({ error: 'passwords must match' });
+            res.status(400).json({ error: 'passwords must match' });
         }
+        if (await moduleUser.find_by_login) {
+            await sendEmail(email, link,
+            'Confirm email adress',
+            `Clik the link to confirm the email ${link}`
+        );
+            res.send("New email is sent")
+        } 
         const hash = await bcrypt.hash(password, saltRounds);
-        
         const user_id = await moduleUser.create_user(login, hash, name, email);
-
-        const newUser = await db('users').where({ users_id: user_id  }).first();
-        res.json(newUser);
+        const newUser = await db('users').where({ user_id: user_id  }).first();
 
         //mail confirmation
-        const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'ptovstonoh@gmail.com',
-            pass: process.env.MAIL_PASS,
-        }
-    });
+        await sendEmail(email, link,
+            'Confirm email adress',
+            `Clik the link to confirm the email ${link}`
+        );
+        res.json({
+            message: "Email is sent",
+            user: newUser
+        });
 
-    const mailOptions = {
-        from: 'ptovstonoh@gmail.com',
-        to: 'ptovstonoh@gmail.com',
-        subject: 'email adress confirmation',
-        text: 'Please confirm the email adress via link'
-    };
-
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
-    
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Registration failed' });
+        res.status(500).json({ error: 'Failed to register user' });
     }
 };
 

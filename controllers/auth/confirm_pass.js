@@ -1,15 +1,13 @@
-import User from "../../models/user.js";
-
-async function handleConfirm(req, res, db, jwt) {
-const { token } = req.params;
+async function handleConfirm(req, res, db, jwt, bcrypt, User) {
+const { confirm_token } = req.params;
 const { newPass } = req.body;
 const SECRET = process.env.TOKEN_SECRET;
 
     try {
-        const decoded = jwt.verify(token, SECRET);
+        const decoded = jwt.verify(confirm_token, SECRET);
         const hashedPass = await bcrypt.hash(newPass, 10);
         const user = new User(db);
-        await user.udate_pass(hashedPass, decoded)
+        await user.update_pass(hashedPass, decoded);
         res.send("Password has been reset successfully");
     
     }catch (err){
