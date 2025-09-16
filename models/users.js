@@ -1,14 +1,13 @@
 class User {
-    constructor(db){
+    constructor(db) {
         this.db = db;
     }
-    async find_user(email, login){
+    async find_user(email, login) {
         const user = await this.db('users')
             .where({ email, login })
             .first();
         return(user);
     }
-
     async create_user(login, hash, name, email, role='user') {
         const [user_id] = await this.db('users').insert({
             login,
@@ -44,7 +43,7 @@ class User {
     async update_conf(decoded) {
         await this.db('users')
         .where({ email: decoded.email })
-        .update({is_email_confirmed: true});
+        .update({ is_email_confirmed: true });
     }
     //user path 
     async find_by_id(id) {
@@ -60,12 +59,17 @@ class User {
     async del_user(id) {
         await this.db('users')
         .where({ user_id: id })
-        .delete();
+        .del();
     }
-    async update_photo(photo) {
+    async update_photo(userId, photo) {
         await this.db('users')
-        .where({ email: decoded.email })
-        .update({is_email_confirmed: true});
+        .where({ user_id: userId })
+        .update({ picture: photo });
+    }
+    async update_user(userId, updates) {
+        await this.db('users')
+        .where({ user_id: userId })
+        .update(updates);
     }
 }
 export default User

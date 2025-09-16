@@ -22,8 +22,8 @@ async function handleRegister(req, res, db, bcrypt, jwt, User) {
         } 
         const hash = await bcrypt.hash(password, saltRounds);
         const user_id = await moduleUser.create_user(login, hash, name, email);
-        const newUser = await db('users').where({ user_id: user_id  }).first();
-
+        //const newUser = await db('users').where({ user_id: user_id  }).first();
+        const newUser = moduleUser.find_by_id(user_id);
         //mail confirmation
         await sendEmail(email, link,
             'Confirm email adress',

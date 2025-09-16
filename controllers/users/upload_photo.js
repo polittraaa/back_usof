@@ -13,7 +13,6 @@ async function handleAvatar(req, res, db, User) {
         // update db 
         const moduleUser = new User(db);
         await moduleUser.update_photo(userId, photoPath);
-        console.log(session)
         const newUser = await db('users').where({ user_id: userId  }).first();
         
         res.status(200).json({

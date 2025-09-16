@@ -28,7 +28,7 @@ router.post('/auth/logout', (req, res) => handleLogout(req, res));
 router.post('/auth/password-reset', (req, res) => handleReset(req, res, jwt));
 router.post('/auth/password-reset/:confirm_token', (req, res) => handleConfirm(req, res, db, jwt, bcrypt, User));
 //
-router.get("/auth/confirm/:token", (req, res) => handleEmailConfirm(req, res, db, jwt, User));
+router.get('/auth/confirm/:token', (req, res) => handleEmailConfirm(req, res, db, jwt, User));
 //user
 router.get('/users', (req, res) => getUsers(req, res, db, User));
 router.get('/users/:user_id', (req, res) => getUser(req, res, db, User));

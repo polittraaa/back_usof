@@ -1,12 +1,12 @@
 async function getPosts(req, res, db, Post) {
-    const moduleUser = new User(db);
+    const modulePost = new Post(db);
     try{
-        const users  = await moduleUser.get_users();
-        res.send(users);
+        const posts  = await modulePost.get_posts();
+        res.send(posts);
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Failed to get users' });
+        res.status(500).json({ error: 'Failed to get posts' });
     }
 }
 export default getPosts;
