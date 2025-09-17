@@ -1,12 +1,21 @@
-async function getPosts(req, res, db, Post) {
-    const modulePost = new Post(db);
-    try{
-        const posts  = await modulePost.get_posts();
-        res.send(posts);
-    }
-    catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to get posts' });
-    }
+export async function getPosts(req, res, db, Post) {
+  const modulePost = new Post(db);
+  try {
+    const page = 1;
+    const limit = 10;
+    const offset = (page - 1) * limit;
+    
+    const role = req.userRole; // form middle
+    const id = req.session?.userId; // for autor parameter 
+    
+    const posts = await modulePost.get_posts(limit, offset, role, id);
+    const total = await modulePost.count(); // can implement diff count for roles 
+    const page_count = Math.ceil(total / limit);
+    
+    res.json({page, page_count, posts});
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to get posts' });
+  }
 }
-export default getPosts;

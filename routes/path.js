@@ -3,6 +3,7 @@ import db from '../db.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from "../models/users.js";
+import Post from "../models/posts.js";
 
 //auth
 import handleLogin from '../controllers/auth/login.js';
@@ -11,15 +12,23 @@ import handleLogout from '../controllers/auth/logout.js';
 import handleConfirm from '../controllers/auth/confirm_pass.js';
 import handleReset from '../controllers/auth/reset_pass.js';
 import handleEmailConfirm from "../controllers/auth/confirm_email.js";
+
 //user
 import getUsers from '../controllers/users/get_users.js';
 import getUser from '../controllers/users/get_user_id.js';
 import handleAvatar from '../controllers/users/upload_photo.js';
 import handleUpdate from '../controllers/users/update_user.js';
 import handleDelete from '../controllers/users/del_user.js';
-//middle
+
+//posts
+import { getPosts } from '../controllers/post/get_posts.js';
+import { getPost } from '../controllers/post/get_post.js';
+
+//middleware
 import { requireLogin } from "../middlewares/session_auth.js";
-import upload from '../middlewares/photo_upload.js'
+import upload from '../middlewares/photo_upload.js';
+import { roleCheck } from '../middlewares/role_check.js';
+
 const router = Router();
 //auth
 router.post('/auth/login', (req, res) => handleLogin(req, res, db, bcrypt, User));
@@ -36,5 +45,6 @@ router.patch('/users/avatar', requireLogin, upload.single("avatar"), (req, res) 
 router.patch('/users/:user_id', requireLogin, (req, res) => handleUpdate(req, res, db, User));
 router.delete('/users/:user_id', requireLogin, (req, res) => handleDelete(req, res, db, User));
 //posts
-
+router.get('/posts', roleCheck(db, User), (req, res) => getPosts(req, res, db, Post));
+router.get('/posts/:post_id', roleCheck(db, User), (req, res) => getPost(req, res, db, Post, User));
 export default router;

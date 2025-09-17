@@ -1,8 +1,7 @@
 async function getUser(req, res, db, User) {
     const moduleUser = new User(db);
     const { user_id } = req.params;
-    
-    console.log('Params:', req.params);
+    //console.log('Params:', req.params);
     try{
         const user  = await moduleUser.find_by_id(user_id);
         if (!user) {

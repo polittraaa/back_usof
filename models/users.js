@@ -71,5 +71,13 @@ class User {
         .where({ user_id: userId })
         .update(updates);
     }
+    //post middl
+    async get_role(id) {
+        const role = await this.db('users')
+        .where({user_id: id})
+        .select('role')
+        .first();
+        return(role);
+    }
 }
 export default User
