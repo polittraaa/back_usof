@@ -1,6 +1,6 @@
-export async function getPost(req, res, db, Post, User) {
+export async function getPost(req, res, db, Post) {
   const modulePost = new Post(db);
-  const moduleUser = new User(db);
+  //const moduleUser = new User(db);
   const { post_id } = req.params;
   try {
     const role = req.userRole; // form middle

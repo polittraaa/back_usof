@@ -46,5 +46,5 @@ router.patch('/users/:user_id', requireLogin, (req, res) => handleUpdate(req, re
 router.delete('/users/:user_id', requireLogin, (req, res) => handleDelete(req, res, db, User));
 //posts
 router.get('/posts', roleCheck(db, User), (req, res) => getPosts(req, res, db, Post));
-router.get('/posts/:post_id', roleCheck(db, User), (req, res) => getPost(req, res, db, Post, User));
+router.get('/posts/:post_id', roleCheck(db, User), (req, res) => getPost(req, res, db, Post));
 export default router;

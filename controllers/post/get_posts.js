@@ -7,9 +7,9 @@ export async function getPosts(req, res, db, Post) {
     
     const role = req.userRole; // form middle
     const id = req.session?.userId; // for autor parameter 
-    
+    console.log("user id", id)
     const posts = await modulePost.get_posts(limit, offset, role, id);
-    const total = await modulePost.count(); // can implement diff count for roles 
+    const total = await modulePost.count(role, id); // can implement diff count for roles 
     const page_count = Math.ceil(total / limit);
     
     res.json({page, page_count, posts});

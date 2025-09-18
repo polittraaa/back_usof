@@ -21,7 +21,7 @@ async function handleLogin(req, res, db, bcrypt, User) {
 
             res.status(200).json({
                 message: 'Login successful',
-                user: { user_id: user.id, login: user.login, email: user.email, role: user.role }
+                user: { user_id: user.user_id, login: user.login, email: user.email, role: user.role }
             });
         }
     } catch(err){
