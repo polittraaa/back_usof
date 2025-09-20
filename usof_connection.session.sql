@@ -1,2 +1,2 @@
-
-SELECT * FROM posts
+select * from posts;
+select * from comments;

@@ -1,11 +1,13 @@
-export function roleCheck(db, User) {
+export function roleCheck(db, Post) {
   return async function (req, res, next) {
     try {
       if (req.session && req.session.userId) {
-        const moduleUser = new User(db); 
-        const role = await moduleUser.get_role(req.session.userId);
-        req.userRole = role; // save role   
-        console.log(role)
+        const modulePost = new Post(db); 
+        const role = await modulePost.get_role(req.session.userId);
+        req.userRole = role.role; // save role
+        console.log('in role check should be json', role)
+        console.log('in role check',req.userRole)
+        console.log('in role check',req.session.userId)
       }
       else {
         req.userRole = 'guest';

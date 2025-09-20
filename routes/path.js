@@ -45,6 +45,6 @@ router.patch('/users/avatar', requireLogin, upload.single("avatar"), (req, res) 
 router.patch('/users/:user_id', requireLogin, (req, res) => handleUpdate(req, res, db, User));
 router.delete('/users/:user_id', requireLogin, (req, res) => handleDelete(req, res, db, User));
 //posts
-router.get('/posts', roleCheck(db, User), (req, res) => getPosts(req, res, db, Post));
-router.get('/posts/:post_id', roleCheck(db, User), (req, res) => getPost(req, res, db, Post));
+router.get('/posts', roleCheck(db, Post), (req, res) => getPosts(req, res, db, Post));
+router.get('/posts/:post_id', roleCheck(db, Post), (req, res) => getPost(req, res, db, Post));
 export default router;

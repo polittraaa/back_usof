@@ -28,14 +28,32 @@ class Post {
     return result[0].total;
   }
 
-  async get_post(role, post_id, userId) {
+  async get_post(role, userId, post_id) {
     const base = this.db('posts').where('post_id', post_id);
-    if (role === 'admin') return base.fist();
-    return base 
-      .andWhere(qb => 
-        qb.where('post_status', 'active').orWhere('autor_id', userId)
+    if (role === 'admin') return base.first();
+    else if (role === 'user') {
+      return base.andWhere(qb => 
+        qb.where('post_status', 'active').orWhere('author_id', userId)
       )
       .first();
+    }
+    else {
+      return base.where({post_status: 'active'}).first();
+    }
   }
+
+   async get_role(id) {
+        const role = await this.db('users')
+        .where({user_id: id})
+        .select('role')
+        .first();
+        return(role);
+    }
+    async get_comments(post_id) {
+      const comments = await this.db('comments')
+      .where({to_post_id: post_id})
+      .orderBy('publish_date', 'desc')
+      return(comments)
+    }
 }
 export default Post
