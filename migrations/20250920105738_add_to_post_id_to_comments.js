@@ -15,7 +15,7 @@ export async function down(knex) {
     table.dropForeign(['to_post_id']); // remove foreign key
     table.dropColumn('to_post_id');    // remove column
     
-    table.dropForeign(['parent_id']); // remove foreign key
+    table.dropForeign(['parent_id']);
     table.dropColumn('parent_id'); 
   });
 };

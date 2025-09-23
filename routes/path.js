@@ -23,6 +23,12 @@ import handleDelete from '../controllers/users/del_user.js';
 //posts
 import { getPosts } from '../controllers/post/get_posts.js';
 import { getPost } from '../controllers/post/get_post.js';
+import { getComments } from '../controllers/post/get_comment.js';
+import { handleComment } from '../controllers/post/create_comment.js';
+import { handleGetCategories } from '../controllers/post/get_category.js';
+import { handleGetLikes } from '../controllers/post/get_likes.js';
+import { handlePost } from '../controllers/post/create_post.js';
+import { handleLikes } from '../controllers/post/create_like.js';
 
 //middleware
 import { requireLogin } from "../middlewares/session_auth.js";
@@ -47,4 +53,11 @@ router.delete('/users/:user_id', requireLogin, (req, res) => handleDelete(req, r
 //posts
 router.get('/posts', roleCheck(db, Post), (req, res) => getPosts(req, res, db, Post));
 router.get('/posts/:post_id', roleCheck(db, Post), (req, res) => getPost(req, res, db, Post));
+router.get('/posts/:post_id/comments', roleCheck(db, Post), (req, res) => getComments(req, res, db, Post));
+router.get('/posts/:post_id/like', roleCheck(db, Post), (req, res) => handleGetLikes(req, res, db, Post));
+router.get('/posts/:post_id/categories', (req, res) => handleGetCategories(req, res, db, Post));
+router.post('/posts/:post_id/comments', requireLogin, (req, res) => handleComment(req, res, db, Post));
+router.post('/posts/', requireLogin, (req, res) => handlePost(req, res, db, Post));
+router.post('/posts/:post_id/like', requireLogin, (req, res) => handleLikes(req, res, db, Post));
+
 export default router;

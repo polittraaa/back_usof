@@ -29,17 +29,21 @@ class Post {
   }
 
   async get_post(role, userId, post_id) {
-    const base = this.db('posts').where('post_id', post_id);
-    if (role === 'admin') return base.first();
-    else if (role === 'user') {
-      return base.andWhere(qb => 
-        qb.where('post_status', 'active').orWhere('author_id', userId)
-      )
+    const base = this.db('posts');
+    if (role === 'admin') return base.where('post_id', post_id).first();
+    if (role === 'user') {
+      return base
+        .where(qb => {
+          qb.where({ post_id })
+            .andWhere('post_status', 'active');
+      })
+      .orWhere(qb => {
+        qb.where({ post_id })
+          .andWhere('author_id', userId);
+      })
       .first();
     }
-    else {
-      return base.where({post_status: 'active'}).first();
-    }
+    return base.where('post_id', post_id).where({post_status: 'active'}).first();
   }
 
    async get_role(id) {
@@ -47,13 +51,135 @@ class Post {
         .where({user_id: id})
         .select('role')
         .first();
-        return(role);
+      return role;
     }
-    async get_comments(post_id) {
-      const comments = await this.db('comments')
-      .where({to_post_id: post_id})
-      .orderBy('publish_date', 'desc')
-      return(comments)
+
+    async get_comments(role, post_id, user_id) {
+      const base =  this.db('comments as c')
+      .join('posts as p', 'c.to_post_id', 'p.post_id')
+      .select(
+         'c.comment_id',
+         'c.content',
+         'c.publish_date',
+         'c.author_id as comment_author',
+         'p.post_id',
+         'p.post_status',
+         'p.author_id as post_author'
+      )
+      .where('c.to_post_id', post_id)
+      .orderBy('publish_date', 'desc');
+
+      if (role === 'admin') return base;
+      if (role === 'user') {
+        return base
+        .where(qb => {
+          qb.where('p.post_status', 'active')
+            .orWhere('p.author_id', user_id);
+      });
     }
+    return base.where('p.post_status', 'active');
+  }
+
+  async new_comment(post_id, id, content) {
+    const [comment_id] = await this.db('comments').insert({
+      author_id: id,
+      publish_date: new Date(),
+      content: content,
+      to_post_id: post_id,
+      parent_id: null
+    });
+    const comment = await this.db('comments')
+    .where({ comment_id })
+    .first();
+    return comment;
+  }
+
+  async get_category(post_id) {
+    const cat = await this.db('categories as c')
+    .join('post_categories as pc', 'c.category_id', 'pc.category_id')
+    .where({'pc.post_id': post_id})
+    .select('c.*');
+    console.log(cat)
+    return cat;
+  }
+
+  async get_likes(role, post_id, user_id) {
+      const base = this.db('likes as l')
+      .join('posts as p', 'l.target_id', 'p.post_id')
+      .select(
+        'l.like_id',
+        'l.publish_date',
+        'l.author_id as like_author',
+        'l.like_type',
+        'p.post_id',
+        'p.post_status',
+        'p.author_id as post_author'
+      ).where('p.post_id', post_id);
+
+    if (role === 'admin') return base;
+    if (role === 'user') {
+      return base.where(qb => {
+        qb.where('p.post_status', 'active')
+          .orWhere('p.author_id', user_id);
+      });
+    }
+    return base.where('p.post_status', 'active');
+  }
+
+  async new_post(title, content, categoryNames, id) {
+    return this.db.transaction(async trx => {
+      // Insert post
+      const [post_id] = await trx('posts').insert({
+        author_id: id,
+        title,
+        post_status: 'active',
+        content,
+        publish_date: new Date()
+      });
+
+      // Find cat IDs
+      let category_ids = [];
+      if (Array.isArray(categoryNames) && categoryNames.length > 0) {
+        const rows = await trx('categories')
+          .whereIn('title', categoryNames)
+          .select('category_id');
+
+        category_ids = rows.map(row => row.category_id);
+
+        console.log("Matched category IDs:", category_ids);
+      }
+
+      // Add into post_categories
+      if (category_ids.length > 0) {
+        const join_rows = category_ids.map(category_id => ({
+          post_id,
+          category_id
+        }));
+        await trx('post_categories').insert(join_rows);
+      } else {
+        console.warn(" No categories matched, nothing added to post_categories");
+      }
+
+      // 4. Get full post
+      const post = await trx('posts')
+        .where({ post_id })
+        .first();
+
+      return { post, join_rows };
+    });
+  }
+
+  async new_like(post_id, id, type){
+     const [like_id] = await this.db('likes').insert({
+      author_id: id,
+      target_id: post_id,
+      publish_date: new Date(),
+      like_type: type
+    });
+    const like = await this.db('likes')
+    .where({ like_id })
+    .first();
+    return like;
+  }
 }
 export default Post

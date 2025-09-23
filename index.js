@@ -8,7 +8,7 @@ import AdminJS from 'adminjs'
 import Plugin from '@adminjs/express'
 import { Adapter, Database, Resource } from '@adminjs/sql'
 import session from 'express-session'
-
+import { makeNewUserHash } from './usof/new_user_hash.js'
 dotenv.config()
 
 AdminJS.registerAdapter({
@@ -30,6 +30,7 @@ const start = async () => {
 
   const admin = new AdminJS({
     resources: [
+      makeNewUserHash(db),// extra for admin auth 
       { resource: db.table('users') },
       { resource: db.table('posts') },
       { resource: db.table('categories') },
