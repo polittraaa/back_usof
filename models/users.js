@@ -2,6 +2,7 @@ class User {
     constructor(db) {
         this.db = db;
     }
+
     async find_user(email, login) {
         const user = await this.db('users')
             .where({ email, login })
@@ -35,10 +36,11 @@ class User {
     }
     async prof_email(email) {
         const row = await this.db('users')
-        .where({ email: email })
+        .where({ email })
         .select('is_email_confirmed')
         .first();
-        return row?.is_email_confirmed ?? false;
+        console.log(row?.is_email_confirmed)
+        return !!row?.is_email_confirmed;
     }
     async update_conf(decoded) {
         await this.db('users')
@@ -66,10 +68,15 @@ class User {
         .where({ user_id: userId })
         .update({ picture: photo });
     }
-    async update_user(userId, updates) {
+    async update_user(userId, updates, need_email_conf) {
         await this.db('users')
         .where({ user_id: userId })
         .update(updates);
+        if (need_email_conf){
+           await this.db('users')
+            .where({ user_id: userId })
+            .update({ is_email_confirmed: false }); 
+        }
     }
 }
 export default User

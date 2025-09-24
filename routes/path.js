@@ -31,13 +31,14 @@ import { handlePost } from '../controllers/post/create_post.js';
 import { handleLikes } from '../controllers/post/create_like.js';
 
 //middleware
+import { emailCheck } from '../middlewares/email_check.js';
 import { requireLogin } from "../middlewares/session_auth.js";
 import upload from '../middlewares/photo_upload.js';
 import { roleCheck } from '../middlewares/role_check.js';
 
 const router = Router();
 //auth
-router.post('/auth/login', (req, res) => handleLogin(req, res, db, bcrypt, User));
+router.post('/auth/login', emailCheck(db, User), (req, res) => handleLogin(req, res, db, bcrypt, User));
 router.post('/auth/register', (req, res) => handleRegister(req, res, db, bcrypt, jwt, User));
 router.post('/auth/logout', (req, res) => handleLogout(req, res));
 router.post('/auth/password-reset', (req, res) => handleReset(req, res, jwt));
