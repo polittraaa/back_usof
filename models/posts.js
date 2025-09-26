@@ -53,6 +53,13 @@ class Post {
         .first();
       return role;
     }
+    async get_author(post_id) {
+        const author = await this.db('posts')
+        .where({post_id})
+        .select('author_id')
+        .first();
+      return author;
+    }
 
     async get_comments(role, post_id, user_id) {
       const base =  this.db('comments as c')
@@ -128,6 +135,18 @@ class Post {
 
   async new_post(title, content, categoryNames, id) {
     return this.db.transaction(async trx => {
+      // Find cat IDs
+      let category_ids = [];
+  
+      if (Array.isArray(categoryNames) && categoryNames.length > 0) {
+        const rows = await trx('categories')
+          .whereIn('title', categoryNames)
+          .select('category_id');
+
+        category_ids = rows.map(row => row.category_id);
+        // console.log("Matched category IDs:", category_ids);
+      }
+
       // Insert post
       const [post_id] = await trx('posts').insert({
         author_id: id,
@@ -137,27 +156,14 @@ class Post {
         publish_date: new Date()
       });
 
-      // Find cat IDs
-      let category_ids = [];
-      if (Array.isArray(categoryNames) && categoryNames.length > 0) {
-        const rows = await trx('categories')
-          .whereIn('title', categoryNames)
-          .select('category_id');
-
-        category_ids = rows.map(row => row.category_id);
-
-        console.log("Matched category IDs:", category_ids);
-      }
-
+      let join_rows = [];
       // Add into post_categories
       if (category_ids.length > 0) {
-        const join_rows = category_ids.map(category_id => ({
+        join_rows = category_ids.map(category_id => ({
           post_id,
           category_id
         }));
         await trx('post_categories').insert(join_rows);
-      } else {
-        console.warn(" No categories matched, nothing added to post_categories");
       }
 
       // 4. Get full post
@@ -169,17 +175,65 @@ class Post {
     });
   }
 
-  async new_like(post_id, id, type){
+  async new_like(post_id, id, like_type){
      const [like_id] = await this.db('likes').insert({
       author_id: id,
       target_id: post_id,
       publish_date: new Date(),
-      like_type: type
+      like_type
     });
     const like = await this.db('likes')
     .where({ like_id })
     .first();
     return like;
+  }
+
+  async update_post(post_id, updates){
+    const { category, ...post_updates } = updates;
+
+    if (Object.keys(post_updates).length > 0){
+      await this.db('posts')
+        .where({ post_id })
+        .update(post_updates);
+    }
+    if (category !== undefined ){
+        await this.db('post_categories')
+        .where({ post_id })
+        .del();
+
+      await this.db('post_categories').insert({
+        post_id,
+        category_id: category
+      });
+    }
+  }
+
+  async del_post(role, id, post_id) {
+    if (role === 'admin') {
+      return this.db('posts')
+      .where({ post_id })
+      .del();
+    }  
+    if (role === 'user') {
+      return  this.db('posts')
+      .where({ post_id, author_id: id })
+      .del();
+    }
+    return 0;
+  }
+
+  async del_like(role, id, post_id) {
+    if (role === 'admin') {
+      return this.db('likes')
+      .where({ target_id: post_id })
+      .del();
+    }  
+    if (role === 'user') {
+      return  this.db('likes')
+      .where({ target_id: post_id, author_id: id })
+      .del();
+    }
+    return 0;
   }
 }
 export default Post

@@ -5,9 +5,7 @@ export function roleCheck(db, Post) {
         const modulePost = new Post(db); 
         const role = await modulePost.get_role(req.session.userId);
         req.userRole = role.role; // save role
-        // console.log('in role check should be json', role)
         // console.log('in role check',req.userRole)
-        // console.log('in role check',req.session.userId)
       }
       else {
         req.userRole = 'guest';

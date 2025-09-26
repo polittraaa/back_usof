@@ -3,7 +3,6 @@ async function handleLogin(req, res, db, bcrypt, User) {
     const userModel = new User(db);
     
     try{
-        //prof the email confirm 
         const user = await userModel.find_user(email, login);
 
         if (!user) {

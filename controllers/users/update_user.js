@@ -1,14 +1,14 @@
 import sendEmail from "../../additional_func/send_email.js"
 
-async function handleUpdate(req, res, db, User) {
+async function handleUpdate(req, res, db, jwt, User) {
    const { user_id } = req.params;
+   const { full_name, email, login } = req.body;
    const moduleUser = new User(db);
    const PORT = process.env.SERVER_PORT;
-   const token = jwt.sign({email}, SECRET, {expiresIn: "20m"});
+   const token = jwt.sign({email}, process.env.TOKEN_SECRET, {expiresIn: "20m"});
    const link = `http://localhost:${PORT}/api/auth/confirm/${token}`
-   
+
    try{
-        const { full_name, email, login } = req.body;
         let need_email_conf;
         const update = {};
         if (full_name !== undefined) update.full_name = full_name;

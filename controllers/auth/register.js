@@ -13,23 +13,29 @@ async function handleRegister(req, res, db, bcrypt, jwt, User) {
         if(password != password_confirm){
             res.status(400).json({ error: 'passwords must match' });
         }
-        if (await moduleUser.find_by_login) {
-            await sendEmail(email, link,
-            'Confirm email adress',
-            `Clik the link to confirm the email ${link}`
-        );
-            res.send("New email is sent")
+        const existingUser = await moduleUser.find_by_login(login);
+        if (existingUser) {    
+            await sendEmail(
+                email, 
+                link,
+                'Confirm email adress',
+                `Clik the link to confirm the email ${link}`
+            );
+            return res.json({ message: "Email confirmation re-sent" });
         } 
         const hash = await bcrypt.hash(password, saltRounds);
         const user_id = await moduleUser.create_user(login, hash, name, email);
-        const newUser = moduleUser.find_by_id(user_id);
+        const newUser = await moduleUser.find_by_id(user_id);
         //mail confirmation
-        await sendEmail(email, link,
+        await sendEmail(
+            email,
+            link,
             'Confirm email adress',
             `Clik the link to confirm the email ${link}`
         );
+
         res.json({
-            message: "Email is sent",
+            message: "Registration email is sent",
             user: newUser
         });
 

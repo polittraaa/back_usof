@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from "../models/users.js";
 import Post from "../models/posts.js";
+import Cat from "../models/categories.js";
 
 //auth
 import handleLogin from '../controllers/auth/login.js';
@@ -19,6 +20,7 @@ import getUser from '../controllers/users/get_user_id.js';
 import handleAvatar from '../controllers/users/upload_photo.js';
 import handleUpdate from '../controllers/users/update_user.js';
 import handleDelete from '../controllers/users/del_user.js';
+import { handleNewUser} from '../controllers/users/create_user.js';
 
 //posts
 import { getPosts } from '../controllers/post/get_posts.js';
@@ -29,6 +31,15 @@ import { handleGetCategories } from '../controllers/post/get_category.js';
 import { handleGetLikes } from '../controllers/post/get_likes.js';
 import { handlePost } from '../controllers/post/create_post.js';
 import { handleLikes } from '../controllers/post/create_like.js';
+import { handleUpdatePost } from '../controllers/post/update_post.js';
+import { handleDeletePost } from '../controllers/post/delete_post.js'
+import { handleDeleteLike } from '../controllers/post/delete_like.js'
+
+//categories
+import { getCat } from '../controllers/categories/get_cat.js';
+
+//comments
+
 
 //middleware
 import { emailCheck } from '../middlewares/email_check.js';
@@ -45,12 +56,15 @@ router.post('/auth/password-reset', (req, res) => handleReset(req, res, jwt));
 router.post('/auth/password-reset/:confirm_token', (req, res) => handleConfirm(req, res, db, jwt, bcrypt, User));
 //
 router.get('/auth/confirm/:token', (req, res) => handleEmailConfirm(req, res, db, jwt, User));
+
 //user
 router.get('/users', (req, res) => getUsers(req, res, db, User));
 router.get('/users/:user_id', (req, res) => getUser(req, res, db, User));
 router.patch('/users/avatar', requireLogin, upload.single("avatar"), (req, res) => handleAvatar(req, res, db, User));
-router.patch('/users/:user_id', requireLogin, (req, res) => handleUpdate(req, res, db, User));
+router.patch('/users/:user_id', requireLogin, (req, res) => handleUpdate(req, res, db, jwt, User));
 router.delete('/users/:user_id', requireLogin, (req, res) => handleDelete(req, res, db, User));
+router.post('/users', requireLogin, roleCheck(db, Post), (req, res) => handleNewUser(req, res, db, bcrypt, User));
+
 //posts
 router.get('/posts', roleCheck(db, Post), (req, res) => getPosts(req, res, db, Post));
 router.get('/posts/:post_id', roleCheck(db, Post), (req, res) => getPost(req, res, db, Post));
@@ -60,5 +74,12 @@ router.get('/posts/:post_id/categories', (req, res) => handleGetCategories(req, 
 router.post('/posts/:post_id/comments', requireLogin, (req, res) => handleComment(req, res, db, Post));
 router.post('/posts/', requireLogin, (req, res) => handlePost(req, res, db, Post));
 router.post('/posts/:post_id/like', requireLogin, (req, res) => handleLikes(req, res, db, Post));
+router.patch('/posts/:post_id', requireLogin, roleCheck(db, Post), (req, res) => handleUpdatePost(req, res, db, Post));
+router.delete('/posts/:post_id', requireLogin, roleCheck(db, Post), (req, res) => handleDeletePost(req, res, db, Post));
+router.delete('/posts/:post_id/like', requireLogin, roleCheck(db, Post), (req, res) => handleDeleteLike(req, res, db, Post));
+
+//categories
+router.get('/categories', requireLogin, (req, res) => getCat(req, res, db, Cat));
+router.get('/categories/:category_id', requireLogin, (req, res) => getCatId(req, res, db, Cat));
 
 export default router;

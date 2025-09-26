@@ -2,7 +2,7 @@ export async function handleLikes(req, res, db, Post) {
     const modulePost = new Post(db);
     const { post_id } = req.params;
     const { type } = req.body;
-    
+    console.log(type)
     try { 
         // const role = req.userRole; 
         const id = req.session?.userId;

@@ -9,6 +9,8 @@ import Plugin from '@adminjs/express'
 import { Adapter, Database, Resource } from '@adminjs/sql'
 import session from 'express-session'
 import { makeNewUserHash } from './usof/new_user_hash.js'
+import { trimInputs } from './middlewares/trim_input.js'
+
 dotenv.config()
 
 AdminJS.registerAdapter({
@@ -44,6 +46,7 @@ const start = async () => {
 
   const adminRouter = Plugin.buildRouter(admin)
   app.use(admin.options.rootPath, adminRouter)
+  app.use(trimInputs)
   app.use(bodyParser.json())
   app.use(cookieParser())
   app.use(cors())
