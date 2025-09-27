@@ -29,10 +29,20 @@ class Cat {
     });
     
     const cat = await this.db('categories')
-    .where({ cat_id })
+    .where({ category_id: cat_id })
     .first();
     return cat;
   }
   
+  async update_cat(category_id, updates) {
+    await this.db('categories')
+      .where({ category_id })
+      .update(updates);
+  }
+  async del_cat(category_id){
+     await this.db('categories')
+      .where({ category_id })
+      .del();
+  }
 }
 export default Cat
