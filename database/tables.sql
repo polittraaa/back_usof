@@ -1,4 +1,4 @@
-USE usof_db
+USE usof_db_polina
 
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,

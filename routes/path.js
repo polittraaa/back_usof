@@ -47,9 +47,10 @@ import { handleCreatetCat } from '../controllers/categories/create_cat.js';
 //comments
 import getCommentById from '../controllers/comment/get_comment_by_id.js';
 import getLikesByCommentId from '../controllers/comment/get_likes_by_comment_id.js';
-
-
-
+import createLikeForComment from '../controllers/comment/create_like_for_comment.js';
+import updateComment from '../controllers/comment/update_comment.js';
+import deleteComment from '../controllers/comment/delete_comment.js';
+import deleteLikeForComment from '../controllers/comment/delete_like_for_comment.js';
 
 //middleware
 import { emailCheck } from '../middlewares/email_check.js';
@@ -103,6 +104,10 @@ router.post('/categories', requireLogin, adminCheck(db, User), (req, res) => han
 // comment
 router.get('/comments/:comment_id', requireLogin, (req, res) => getCommentById(req, res, db, Comment));
 router.get('/comments/:comment_id/like', requireLogin, roleCheckComment(db, Comment), (req, res) => getLikesByCommentId(req, res, db, Comment));
+router.post('/comments/:comment_id/like', requireLogin, (req, res) => createLikeForComment(req, res, db, Comment));
+router.patch('/comments/:comment_id', requireLogin, roleCheckComment(db, Comment), (req, res) => updateComment(req, res, db, Comment));
+router.delete('/comments/:comment_id', requireLogin, roleCheckComment(db, Comment), (req, res) => deleteComment(req, res, db, Comment));
+router.delete('/comments/:comment_id/like', requireLogin, roleCheckComment(db, Comment), (req, res) => deleteLikeForComment(req, res, db, Comment));
 
 
 export default router;
