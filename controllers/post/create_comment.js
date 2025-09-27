@@ -6,8 +6,6 @@ export async function handleComment(req, res, db, Post) {
     try { 
         const role = req.userRole;
         const id = req.session?.userId;
-        // console.log('in get post, role:', role)
-        // console.log('in get post, user:', id)
 
         const comment = await modulePost.new_comment(post_id, id, content);
         res.json(comment);

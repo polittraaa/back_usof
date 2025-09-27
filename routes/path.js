@@ -108,5 +108,9 @@ router.patch('/comments/:comment_id', requireLogin, roleCheckComment(db, Comment
 router.delete('/comments/:comment_id', requireLogin, roleCheckComment(db, Comment), (req, res) => deleteComment(req, res, db, Comment));
 router.delete('/comments/:comment_id/like', requireLogin, roleCheckComment(db, Comment), (req, res) => deleteLikeForComment(req, res, db, Comment));
 
+//favaorites 
+router.get('/favorites', requireLogin, (req, res) => getFavorite(req, res, db, Post));
+router.post('/favorites/:favorites_id', requireLogin, (req, res) => addPostFav(req, res, db, Post));
+router.delete('/favorites', requireLogin, (req, res) => deletePostFav(req, res, db, Post));
 
 export default router;

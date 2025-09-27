@@ -52,10 +52,10 @@ class Comment {
         return like;
     }
 
-    async update(id, content) {
+    async update(id, updates) {
         await this.db("comments")
             .where({ comment_id: id })
-            .update({ content: content });
+            .update(updates);
 
         return this.find_by_id(id);
     }

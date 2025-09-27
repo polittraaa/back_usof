@@ -12,9 +12,6 @@ export default async function getLikesByCommentId(req, res, db, Comment) {
             return res.status(404).json({ error: "Comment not found" });
         }
 
-        // const likes = await db('likes').where({ target_type: 'comment', target_id: comment_id });
-        // console.log(likes)
-
         const likes = await commentModel.get_likes(role, comment_id, req.session.userId);
 
         res.json(likes);
