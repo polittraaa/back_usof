@@ -3,6 +3,9 @@ export async function getCatIdPost(req, res, db, Cat){
     const { category_id } = req.params;
     try {
         const cat = await moduleCat.get_cat_id_post(category_id);
+        if (cat.length === 0){
+            return res.status(400).json({ error: " No posts in this category yet" });
+        }
         res.json({ cat });
     }
     catch (err) {

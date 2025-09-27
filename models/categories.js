@@ -18,9 +18,21 @@ class Cat {
     .join('posts as p', 'pc.post_id', 'p.post_id')
     .where({'pc.category_id': cid})
     .select('p.*');
-    return cat 
+    return cat;
   }
 
+  async new_cat(title) {
+    const [cat_id] = await this.db('categories')
+    .insert({
+      title,
+      category_description: "..."
+    });
+    
+    const cat = await this.db('categories')
+    .where({ cat_id })
+    .first();
+    return cat;
+  }
   
 }
 export default Cat

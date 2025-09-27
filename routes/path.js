@@ -39,7 +39,14 @@ import { handleDeleteLike } from '../controllers/post/delete_like.js'
 import { getCat } from '../controllers/categories/get_cat.js';
 import { getCatId }  from '../controllers/categories/get_cat_id.js';
 import { getCatIdPost } from '../controllers/categories/get_cat_id_post.js';
+import { handleCreatetCat } from '../controllers/categories/create_cat.js';
+
+
+
 //comments
+
+
+
 
 
 //middleware
@@ -47,8 +54,10 @@ import { emailCheck } from '../middlewares/email_check.js';
 import { requireLogin } from "../middlewares/session_auth.js";
 import upload from '../middlewares/photo_upload.js';
 import { roleCheck } from '../middlewares/role_check.js';
+import { adminCheck } from '../middlewares/admin_check.js';
 
 const router = Router();
+
 //auth
 router.post('/auth/login', emailCheck(db, User), (req, res) => handleLogin(req, res, db, bcrypt, User));
 router.post('/auth/register', (req, res) => handleRegister(req, res, db, bcrypt, jwt, User));
@@ -83,5 +92,11 @@ router.delete('/posts/:post_id/like', requireLogin, roleCheck(db, Post), (req, r
 router.get('/categories', requireLogin, (req, res) => getCat(req, res, db, Cat));
 router.get('/categories/:category_id', requireLogin, (req, res) => getCatId(req, res, db, Cat));
 router.get('/categories/:category_id/posts', requireLogin, (req, res) => getCatIdPost(req, res, db, Cat));
+router.post('/categories', requireLogin, adminCheck(db, User), (req, res) => handleCreatetCat(req, res, db, Cat));
+
+
+
+
+
 
 export default router;

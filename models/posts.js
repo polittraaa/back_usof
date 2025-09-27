@@ -143,7 +143,6 @@ class Post {
           .select('category_id');
 
         category_ids = rows.map(row => row.category_id);
-        // console.log("Matched category IDs:", category_ids);
       }
 
       // Insert post
