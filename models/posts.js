@@ -106,7 +106,6 @@ class Post {
     .join('post_categories as pc', 'c.category_id', 'pc.category_id')
     .where({'pc.post_id': post_id})
     .select('c.*');
-    console.log(cat)
     return cat;
   }
 
@@ -145,7 +144,6 @@ class Post {
           .select('category_id');
 
         category_ids = rows.map(row => row.category_id);
-        // console.log("Matched category IDs:", category_ids);
       }
 
       // Insert post
