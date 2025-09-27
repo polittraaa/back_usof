@@ -106,7 +106,6 @@ class Post {
     .join('post_categories as pc', 'c.category_id', 'pc.category_id')
     .where({'pc.post_id': post_id})
     .select('c.*');
-    console.log(cat)
     return cat;
   }
 

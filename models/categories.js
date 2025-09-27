@@ -4,9 +4,23 @@ class Cat {
   }
 
   async get_cat() {
-    const query = this.db('categories');
-    return query;
+    return this.db('categories');
   }
+
+  async get_cat_id(cid) {
+    return this.db('categories')
+    .where({category_id: cid})
+    .first()
+  }
+
+  async get_cat_id_post(cid) {
+    const cat = await this.db('post_categories as pc')
+    .join('posts as p', 'pc.post_id', 'p.post_id')
+    .where({'pc.category_id': cid})
+    .select('p.*');
+    return cat 
+  }
+
   
 }
 export default Cat

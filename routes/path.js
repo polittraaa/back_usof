@@ -37,7 +37,8 @@ import { handleDeleteLike } from '../controllers/post/delete_like.js'
 
 //categories
 import { getCat } from '../controllers/categories/get_cat.js';
-
+import { getCatId }  from '../controllers/categories/get_cat_id.js';
+import { getCatIdPost } from '../controllers/categories/get_cat_id_post.js';
 //comments
 
 
@@ -81,5 +82,6 @@ router.delete('/posts/:post_id/like', requireLogin, roleCheck(db, Post), (req, r
 //categories
 router.get('/categories', requireLogin, (req, res) => getCat(req, res, db, Cat));
 router.get('/categories/:category_id', requireLogin, (req, res) => getCatId(req, res, db, Cat));
+router.get('/categories/:category_id/posts', requireLogin, (req, res) => getCatIdPost(req, res, db, Cat));
 
 export default router;
