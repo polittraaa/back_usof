@@ -43,7 +43,7 @@ class User {
         .where({ email })
         .select('is_email_confirmed')
         .first();
-        console.log(row?.is_email_confirmed)
+        // console.log(row?.is_email_confirmed)
         return !!row?.is_email_confirmed;
     }
 

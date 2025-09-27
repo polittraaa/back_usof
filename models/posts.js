@@ -121,7 +121,8 @@ class Post {
         'p.post_id',
         'p.post_status',
         'p.author_id as post_author'
-      ).where('p.post_id', post_id);
+      ).where('p.post_id', post_id)
+      .andWhere('l.target_type', 'post');
 
     if (role === 'admin') return base;
     if (role === 'user') {

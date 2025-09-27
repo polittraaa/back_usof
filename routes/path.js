@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import User from "../models/users.js";
 import Post from "../models/posts.js";
 import Cat from "../models/categories.js";
+import Comment from '../models/comments.js';
 
 //auth
 import handleLogin from '../controllers/auth/login.js';
@@ -39,13 +40,15 @@ import { handleDeleteLike } from '../controllers/post/delete_like.js'
 import { getCat } from '../controllers/categories/get_cat.js';
 
 //comments
-
+import getCommentById from '../controllers/comment/get_comment_by_id.js';
+import getLikesByCommentId from '../controllers/comment/get_likes_by_comment_id.js';
 
 //middleware
 import { emailCheck } from '../middlewares/email_check.js';
 import { requireLogin } from "../middlewares/session_auth.js";
 import upload from '../middlewares/photo_upload.js';
 import { roleCheck } from '../middlewares/role_check.js';
+import { roleCheckComment } from '../middlewares/role_check_comments.js';
 
 const router = Router();
 //auth
@@ -80,6 +83,14 @@ router.delete('/posts/:post_id/like', requireLogin, roleCheck(db, Post), (req, r
 
 //categories
 router.get('/categories', requireLogin, (req, res) => getCat(req, res, db, Cat));
-router.get('/categories/:category_id', requireLogin, (req, res) => getCatId(req, res, db, Cat));
+router.get('/categories/:category_id', requireLogin, (req, res) => handleGetCommentById(req, res, db, Cat));
+
+
+
+
+// comment
+router.get('/comments/:comment_id', requireLogin, (req, res) => getCommentById(req, res, db, Comment));
+router.get('/comments/:comment_id/like', requireLogin, roleCheckComment(db, Comment), (req, res) => getLikesByCommentId(req, res, db, Comment));
+
 
 export default router;
