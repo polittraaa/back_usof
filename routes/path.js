@@ -41,8 +41,8 @@ import { getCat } from '../controllers/categories/get_cat.js';
 import { getCatId }  from '../controllers/categories/get_cat_id.js';
 import { getCatIdPost } from '../controllers/categories/get_cat_id_post.js';
 import { handleCreatetCat } from '../controllers/categories/create_cat.js';
-
-
+import { handleEditCat } from '../controllers/categories/edit_cat.js'
+import { handleDeleteCat } from '../controllers/categories/del_cat.js'
 
 //comments
 import getCommentById from '../controllers/comment/get_comment_by_id.js';
@@ -93,12 +93,11 @@ router.delete('/posts/:post_id/like', requireLogin, roleCheck(db, Post), (req, r
 
 //categories
 router.get('/categories', requireLogin, (req, res) => getCat(req, res, db, Cat));
-router.get('/categories/:category_id', requireLogin, (req, res) => handleGetCommentById(req, res, db, Cat));
 router.get('/categories/:category_id', requireLogin, (req, res) => getCatId(req, res, db, Cat));
 router.get('/categories/:category_id/posts', requireLogin, (req, res) => getCatIdPost(req, res, db, Cat));
 router.post('/categories', requireLogin, adminCheck(db, User), (req, res) => handleCreatetCat(req, res, db, Cat));
-
-
+router.patch('/categories/:category_id', requireLogin, adminCheck(db, User), (req, res) => handleEditCat(req, res, db, Cat));
+router.delete('/categories/:category_id', requireLogin, adminCheck(db, User), (req, res) => handleDeleteCat(req, res, db, Cat));
 
 // comment
 router.get('/comments/:comment_id', requireLogin, (req, res) => getCommentById(req, res, db, Comment));
