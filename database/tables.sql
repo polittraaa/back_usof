@@ -1,4 +1,4 @@
-USE usof_db_polina
+USE usof_db
 
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -55,4 +55,12 @@ CREATE TABLE likes (
     target_id INT NOT NULL,
     like_type ENUM('like', 'dislike'),
     FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE favorites (
+    post_id INT AUTO_INCREMENT PRIMARY KEY,
+    author_id INT NOT NULL,
+    add_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
 );

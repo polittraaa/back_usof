@@ -39,6 +39,7 @@ const start = async () => {
       { resource: db.table('post_categories') },
       { resource: db.table('comments') },
       { resource: db.table('likes') },
+      { resource: db.table('favorites') },
     ],
   })
 

@@ -6,6 +6,7 @@ import User from "../models/users.js";
 import Post from "../models/posts.js";
 import Cat from "../models/categories.js";
 import Comment from '../models/comments.js';
+import Fav from '../models/favorites.js';
 
 //auth
 import handleLogin from '../controllers/auth/login.js';
@@ -33,16 +34,16 @@ import { handleGetLikes } from '../controllers/post/get_likes.js';
 import { handlePost } from '../controllers/post/create_post.js';
 import { handleLikes } from '../controllers/post/create_like.js';
 import { handleUpdatePost } from '../controllers/post/update_post.js';
-import { handleDeletePost } from '../controllers/post/delete_post.js'
-import { handleDeleteLike } from '../controllers/post/delete_like.js'
+import { handleDeletePost } from '../controllers/post/delete_post.js';
+import { handleDeleteLike } from '../controllers/post/delete_like.js';
 
 //categories
 import { getCat } from '../controllers/categories/get_cat.js';
 import { getCatId }  from '../controllers/categories/get_cat_id.js';
 import { getCatIdPost } from '../controllers/categories/get_cat_id_post.js';
 import { handleCreatetCat } from '../controllers/categories/create_cat.js';
-import { handleEditCat } from '../controllers/categories/edit_cat.js'
-import { handleDeleteCat } from '../controllers/categories/del_cat.js'
+import { handleEditCat } from '../controllers/categories/edit_cat.js';
+import { handleDeleteCat } from '../controllers/categories/del_cat.js';
 
 //comments
 import getCommentById from '../controllers/comment/get_comment_by_id.js';
@@ -52,6 +53,11 @@ import updateComment from '../controllers/comment/update_comment.js';
 import deleteComment from '../controllers/comment/delete_comment.js';
 import deleteLikeForComment from '../controllers/comment/delete_like_for_comment.js';
 
+//fav
+import { getFavorite } from '../controllers/favorites/get_fav.js';
+import { addPostFav } from '../controllers/favorites/add_fav.js';
+import { deletePostFav } from '../controllers/favorites/del_fav.js';
+
 //middleware
 import { emailCheck } from '../middlewares/email_check.js';
 import { requireLogin } from "../middlewares/session_auth.js";
@@ -59,6 +65,7 @@ import upload from '../middlewares/photo_upload.js';
 import { roleCheck } from '../middlewares/role_check.js';
 import { roleCheckComment } from '../middlewares/role_check_comments.js';
 import { adminCheck } from '../middlewares/admin_check.js';
+
 
 const router = Router();
 
@@ -109,8 +116,8 @@ router.delete('/comments/:comment_id', requireLogin, roleCheckComment(db, Commen
 router.delete('/comments/:comment_id/like', requireLogin, roleCheckComment(db, Comment), (req, res) => deleteLikeForComment(req, res, db, Comment));
 
 //favaorites 
-router.get('/favorites', requireLogin, (req, res) => getFavorite(req, res, db, Post));
-router.post('/favorites/:favorites_id', requireLogin, (req, res) => addPostFav(req, res, db, Post));
-router.delete('/favorites', requireLogin, (req, res) => deletePostFav(req, res, db, Post));
+router.get('/favorites', requireLogin, (req, res) => getFavorite(req, res, db, Fav));
+router.post('/favorites/:post_id', requireLogin, (req, res) => addPostFav(req, res, db, Fav, Post));
+router.delete('/favorites/:post_id', requireLogin, (req, res) => deletePostFav(req, res, db, Fav));
 
 export default router;
