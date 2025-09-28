@@ -3,18 +3,68 @@ class Post {
     this.db = db;
   } 
 
-  async get_posts(limit, offset, role, userId) {
-    const query = this.db('posts');
-    if (role === 'admin') {
-      // no filter
-    } else if (role === 'user') {
-      query.where(qb =>
-        qb.where('post_status', 'active').orWhere('author_id', userId)
-      );
+  async get_posts(limit, offset, role, userId, sort = "rating", order = "desc", filters = {}) {
+    let query = this.db('posts') 
+        .select( 
+            'posts.*', 
+            this.db.raw("COUNT(CASE WHEN likes.like_type = 'like' THEN 1 END) as likes_count"), 
+            this.db.raw("COUNT(CASE WHEN likes.like_type = 'dislike' THEN 1 END) as dislikes_count"), 
+            this.db.raw("COUNT(CASE WHEN likes.like_type = 'like' THEN 1 END) - COUNT(CASE WHEN likes.like_type = 'dislike' THEN 1 END) as rating") 
+        ) 
+        .leftJoin('likes', 'posts.post_id', 'likes.target_id') 
+        .groupBy('posts.post_id');         
+
+    if (userId) {
+        if (role === 'admin') {
+            // админ видит все посты
+        } else {
+            // обычный пользователь: активные + его собственные неактивные
+            query = query.where(function() {
+                this.where('posts.post_status', 'active')
+                    .orWhere(function() {
+                        this.where('posts.post_status', 'inactive')
+                            .andWhere('posts.author_id', userId);
+                    });
+            });
+        }
     } else {
-      query.where({ post_status: 'active' });
+        // неавторизованный пользователь: только активные
+        query = query.where('posts.post_status', 'active');
     }
-    return query.orderBy('publish_date', 'desc').limit(limit).offset(offset);
+
+    // --- filtering ---
+    if (filters.categories && filters.categories.length > 0) {
+        query = query
+            .join('post_categories as pc', 'posts.post_id', 'pc.post_id')
+            .whereIn('pc.category_id', filters.categories);
+    }
+    
+    if (filters.date_from) {
+        query = query.where('posts.publish_date', '>=', filters.date_from + " 00:00:00");
+    }
+
+    if (filters.date_to) {
+        query = query.where('posts.publish_date', '<=', filters.date_to + " 23:59:59");
+    }
+    
+    if (filters.status) {
+        query = query.where('posts.post_status', filters.status);
+    }
+
+    // --- sorting ---
+    if (sort === 'date') { 
+        query = query.orderBy('posts.publish_date', order); 
+    } else if (sort === 'rating') { 
+        query = query.orderBy('rating', order); 
+    } else { 
+        query = query.orderBy('likes_count', order); 
+    } 
+    
+    const posts = await query.limit(limit).offset(offset); 
+    
+    return { 
+        posts: posts 
+    };
   }
 
   async count(role, userId) {
