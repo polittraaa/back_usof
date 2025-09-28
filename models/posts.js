@@ -16,9 +16,8 @@ class Post {
 
     if (userId) {
         if (role === 'admin') {
-            // админ видит все посты
+            // admin all
         } else {
-            // обычный пользователь: активные + его собственные неактивные
             query = query.where(function() {
                 this.where('posts.post_status', 'active')
                     .orWhere(function() {
@@ -28,7 +27,6 @@ class Post {
             });
         }
     } else {
-        // неавторизованный пользователь: только активные
         query = query.where('posts.post_status', 'active');
     }
 
