@@ -1,8 +1,8 @@
 # back_usof
-
+![alt text](USOF_backend.png)
 # USOF Project – Forum API with Admin Panel
 
-## 📝 Short Description
+## Short Description
 This project is a **RESTful API** built with **Node.js, Express, and MySQL**.  
 It is implementation of a forum-like system with authentication, user management, posts, categories, comments, likes, and an **AdminJS** dashboard for administrators.  
 
@@ -16,7 +16,7 @@ This API supports:
 
 ---
 
-## ⚙️ Requirements and Dependencies
+## Requirements and Dependencies
 
 ### Requirements
 - [Node.js](https://nodejs.org/) (>= 18.x)
