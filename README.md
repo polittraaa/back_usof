@@ -39,7 +39,7 @@ The main npm packages used in the project:
 
 ---
 
-## 🚀 How to Run the Project
+##  How to Run the Project
 
 1. **Clone the repository**
    ```bash
@@ -91,53 +91,3 @@ Navigate to:
     http://localhost:3001/admin
     ```
 
----
-
-## 📖 API Overview
-
-### Authentication module
-- ```POST /api/auth/register``` – Register new user
-- ```POST /api/auth/login``` – Login (email must be confirmed)
-- ```POST /api/auth/logout``` – Logout
-- ```POST /api/auth/password-reset``` – Request password reset
-- ```POST /api/auth/password-reset/:token``` – Confirm password reset
-- ```POST /api/auth/register/verify-email``` – Verify email
-
-### User module
-- ```GET /api/users``` – Get all users
-- ```GET /api/users/:id``` – Get user by ID
-- ```POST /api/users``` – Create user (admin only)
-- ```PATCH /api/users/:id``` – Update user (admin or self)
-- ```PATCH /api/users/avatar``` – Upload avatar
-- ```DELETE /api/users/:id``` – Delete user (admin or self)
-
-### Post module
-- ```GET /api/posts``` – Get all posts (with pagination)
-- ```GET /api/posts/:id``` – Get post by ID
-- ```POST /api/posts``` – Create new post (auth required)
-- ```PATCH /api/posts/:id``` – Update post (author or admin)
-- ```DELETE /api/posts/:id``` – Delete post (author or admin)
-- ```POST /api/posts/:id/like``` – Like post
-- ```DELETE /api/posts/:id/like``` – Remove like
-
-### Categories module
-- ```GET /api/categories``` – Get all categories
-- ```GET /api/categories/:id``` – Get category by ID
-- ```GET /api/categories/:id/posts``` – Get posts by category
-- ```POST /api/categories``` – Create category
-- ```PATCH /api/categories/:id``` – Update category
-- ```DELETE /api/categories/:id``` – Delete category
-
-### Comments module
-- ```GET /api/posts/:id/comments``` – Get comments for a post
-- ```GET /api/comments/:id``` – Get comment by ID
-- ```POST /api/posts/:id/comments``` – Create comment
-- ```PATCH /api/comments/:id``` – Update comment
-- ```DELETE /api/comments/:id``` – Delete comment
-- ```POST /api/comments/:id/like``` – Like comment
-- ```DELETE /api/comments/:id/like``` – Remove like
-
----
-
-## 🔍 Documentation
-For detailed documentation, see [DOCUMENTATION.md]().  
