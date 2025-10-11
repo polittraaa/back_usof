@@ -50,7 +50,11 @@ const start = async () => {
   app.use(trimInputs)
   app.use(bodyParser.json())
   app.use(cookieParser())
-  app.use(cors())
+  // app.use(cors())
+  app.use(cors({
+    origin: 'http://localhost:5173', // разрешаем только этот фронт
+    credentials: true               // разрешаем куки
+  }));
   app.use( session({
       secret: process.env.COOKIE_SECRET,
       saveUninitialized: false,

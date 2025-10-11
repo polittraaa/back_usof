@@ -8,7 +8,7 @@ export async function getComments(req, res, db, Post) {
 
         const comments = await modulePost.get_comments(role, post_id, id);
         if (comments.length === 0){
-            return res.status(404).json({ error: 'No comment to this post yet' });
+            return res.status(200).json({ message: 'No comment to this post yet' });
         }
         res.json({comments})
     }

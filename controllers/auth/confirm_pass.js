@@ -8,7 +8,7 @@ const SECRET = process.env.TOKEN_SECRET;
         const hashedPass = await bcrypt.hash(newPass, 10);
         const user = new User(db);
         await user.update_pass(hashedPass, decoded);
-        res.send("Password has been reset successfully");
+        res.json({message: "Password has been reset successfully"});
     
     }catch (err){
         console.error("Error resetting password:", err);

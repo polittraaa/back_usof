@@ -4,14 +4,15 @@ async function handleReset(req, res, jwt) {
     const { email } = req.body;
     const SECRET = process.env.TOKEN_SECRET;
     const PORT = process.env.SERVER_PORT;
+    const FRONTEND_PORT = 5173;
     try{
         const token = jwt.sign({email}, SECRET, {expiresIn: "20m"});
-        const link = `http://localhost:${PORT}/api/auth/password-reset/${token}`;
+        const link = `http://localhost:${FRONTEND_PORT}/api/auth/password-reset/${token}`;
         sendEmail(email,link,
             'Changing the password ',
             `Clik the link to change the password ${link}`
         );
-        res.send("Email is sent");
+        res.json({message: "Email is sent"});
     }catch(err) {
         console.error("❌ Detailed error:", err);
         res.status(500).json({ 
