@@ -10,7 +10,7 @@
 5. [Installation and Running](#installation-and-running)
 6. [Environment Variables](#environment-variables)
 7. [API Endpoints](#api-endpoints-summary)
-9. [Admin Panel (AdminJS)](#admin-panel-adminjs)
+8. [Admin Panel (AdminJS)](#admin-panel-adminjs)
 
 ---
 
@@ -19,6 +19,7 @@
 USOF is a RESTful API for a forum-like application with user management, posts, comments, categories, likes, and roles (admin / user). The project is built using Node.js + Express and uses MySQL (mysql2) as the database. The admin interface is implemented with AdminJS.
 
 Key features:
+
 - User registration, email verification, and password reset
 - Authorization and session management
 - CRUD operations for users, posts, categories, and comments
@@ -26,29 +27,34 @@ Key features:
 - Lock/unlock posts and comments
 - Avatar uploads
 - Role-based access (admin, author, user)
-- Add post to favorites 
+- Add post to favorites
 - Sort and filter posts
+
 ---
 
 ## Current Status and Progress per CBL Stages
 
 ### Engage
+
 **Goal:** define requirements, target audience, and use cases.
 **Done:**
+
 - Scope defined: forum with roles and basic moderation.
 - Requirements collected: registration/login, post creation, comments, likes, categories, admin panel , post sorting.
 - Initial README and server skeleton (routes, controllers, middleware) created.
 
 **Result:** prioritized feature list (auth → admin → posts → categories → comments → likes + favorites).
 
---- 
+---
 
 ### Investigate
+
 **Goal:** choose tools, design DB, API, and architecture.
 **Done:**
+
 - Tech stack chosen: Node.js, Express, MySQL (mysql2), Knex + migration, AdminJS for admin.
 - Database schema designed (users, posts, categories, post_categories,
- comments, likes, favorites).
+  comments, likes, favorites).
 - Email verification and password reset flows designed (token links).
 - Middlewares identified: emailCheck, requireLogin, upload, roleCheck, roleCheckComment, adminCheck.
 
@@ -57,14 +63,17 @@ Key features:
 ---
 
 ### Act
+
 **Goal:** implement features step by step, test, and document.
 **Done:**
+
 - Core routes and controllers implemented (handlers imported in `\routes\path.js` used in `index.js`).
 - Middleware templates implemented and AdminJS integrated.
 - Avatar upload implemented via multer and served from `\public\uploads`.
 - Email skeleton (nodemailer) and password tokens implemented.
 
 **Remaining:**
+
 - Complete any missing controllers in `controllers/`
 - End-to-end testing
 
@@ -73,6 +82,7 @@ Key features:
 ## Project Architecture and Algorithm
 
 ### Folder Structure
+
 ```
 root/
 ├─ controllers/           # business logic for each entity
@@ -95,6 +105,7 @@ root/
 ```
 
 ### Request Flow Example (POST /api/posts)
+
 1. Client sends `POST /api/posts` with session cookie.
 2. `requireLogin` middleware checks the session.
 3. `handlePost` controller validates input (title, body, categories).
@@ -102,10 +113,12 @@ root/
 5. Returns the created post with HTTP 200.
 
 ### Authorization and Sessions
+
 - Uses `express-session`. After login, `req.session.userId` is stored.
 - `requireLogin` middleware checks session and user.
 
 ### Email Verification and Password Reset
+
 - On registration, an email is sent confirmation token.
 - Clicking the link calls `POST /api/auth/confirm/:token`.
 - Password reset request sends email with `confirm_token`.
@@ -132,19 +145,19 @@ Stores user data.
 - updated_at
 - is_email_confirmed
 
-| Field                 | Type                                                              | Description                                 |
-|-----------------------|-------------------------------------------------------------------|---------------------------------------------|
-| `user_id`             | INT PK                                                            | Unique ID                                   |
-| `login`               | VARCHAR(50)                                                       | Login (nickname)                            |
-| `password_hash`       | VARCHAR(255)                                                      | Hashed password                             |
-| `full_name`           | VARCHAR(100)                                                      | Full name                                   |
-| `email`               | VARCHAR(100)                                                      | E-mail                                      |
-| `profile_picture`     | VARCHAR(255)                                                      | Profile picture URL                         |
-| `rating`              | INT DEFAULT 0                                                     | Likes - Dislikes (automatic recalculation)  |
-| `role`                | ENUM('user','admin') DEFAULT 'user'                               | Rights                                      |
-| `created_at`          | TIMESTAMP DEFAULT CURRENT_TIMESTAMP                               | Profile creation date                       |
-| `updated_at`          | TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP   | Profile change date                         |
-| `is_email_confirmed`  | BOOLEAN DEFAULT FALSE                                             | Profile change date                         |
+| Field                | Type                                                            | Description                                |
+| -------------------- | --------------------------------------------------------------- | ------------------------------------------ |
+| `user_id`            | INT PK                                                          | Unique ID                                  |
+| `login`              | VARCHAR(50)                                                     | Login (nickname)                           |
+| `password_hash`      | VARCHAR(255)                                                    | Hashed password                            |
+| `full_name`          | VARCHAR(100)                                                    | Full name                                  |
+| `email`              | VARCHAR(100)                                                    | E-mail                                     |
+| `profile_picture`    | VARCHAR(255)                                                    | Profile picture URL                        |
+| `rating`             | INT DEFAULT 0                                                   | Likes - Dislikes (automatic recalculation) |
+| `role`               | ENUM('user','admin') DEFAULT 'user'                             | Rights                                     |
+| `created_at`         | TIMESTAMP DEFAULT CURRENT_TIMESTAMP                             | Profile creation date                      |
+| `updated_at`         | TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP | Profile change date                        |
+| `is_email_confirmed` | BOOLEAN DEFAULT FALSE                                           | Profile change date                        |
 
 ---
 
@@ -160,15 +173,15 @@ Information about all posts.
 - content
 - image_url
 
-| Field              | Type                                                         | Description                           |
-|--------------------|--------------------------------------------------------------|---------------------------------------|
-| `post_id`          | INT PK                                                       | Unique ID                             |
-| `author_id`        | INT FK →  users.id                                           | Who has created                       |
-| `title`            | VARCHAR(150)                                                 | Publication title                     |
-| `publish_date `    | TIMESTAMP DEFAULT CURRENT_TIMESTAMP                          | Publication date                      |
-| `post_status`      | ENUM('active','inactive') DEFAULT 'active'                   | Visibility                            |
-| `content`          | TEXT                                                         | Description of the problem/solution   |
-| `image_url`        | VARCHAR(255)                                                 | Upload image                          |
+| Field           | Type                                       | Description                         |
+| --------------- | ------------------------------------------ | ----------------------------------- |
+| `post_id`       | INT PK                                     | Unique ID                           |
+| `author_id`     | INT FK → users.id                          | Who has created                     |
+| `title`         | VARCHAR(150)                               | Publication title                   |
+| `publish_date ` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP        | Publication date                    |
+| `post_status`   | ENUM('active','inactive') DEFAULT 'active' | Visibility                          |
+| `content`       | TEXT                                       | Description of the problem/solution |
+| `image_url`     | VARCHAR(255)                               | Upload image                        |
 
 ---
 
@@ -180,11 +193,11 @@ Information about post categories.
 - title
 - category_description
 
-| Field                   | Type                                 | Description                  |
-|-------------------------|--------------------------------------|------------------------------|
-| `category_id`           | INT PK                               | Unique ID                    |
-| `title`                 | VARCHAR(50)                          | Category title               |
-| `category_description`  | TEXT                                 | Category description         |
+| Field                  | Type        | Description          |
+| ---------------------- | ----------- | -------------------- |
+| `category_id`          | INT PK      | Unique ID            |
+| `title`                | VARCHAR(50) | Category title       |
+| `category_description` | TEXT        | Category description |
 
 ---
 
@@ -200,15 +213,15 @@ Stores all comments to the post.
 - target_state
 - parent_id
 
-| Field           | Type                                        | Description                   |
-|-----------------|---------------------------------------------|-------------------------------|
-| `comment_id`    | INT PK                                      | Unique ID                     |
-| `to_post_id`    | INT FK →  posts.id                          | What post does it belong to   |
-| `author_id`     | INT FK →  users.id                          | Who wrote                     |
-| `content`       | TEXT                                        | Comment text                  |
-| `publish_date`  | TIMESTAMP DEFAULT CURRENT_TIMESTAMP         | Comment creation date         |
-| `target_state`  | ENUM('active','inactive') DEFAULT 'active'  | Comment status                |
-| `parent_id`     | INT FK →  comments.id, NULL                 | For nested comments           |
+| Field          | Type                                       | Description                 |
+| -------------- | ------------------------------------------ | --------------------------- |
+| `comment_id`   | INT PK                                     | Unique ID                   |
+| `to_post_id`   | INT FK → posts.id                          | What post does it belong to |
+| `author_id`    | INT FK → users.id                          | Who wrote                   |
+| `content`      | TEXT                                       | Comment text                |
+| `publish_date` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP        | Comment creation date       |
+| `target_state` | ENUM('active','inactive') DEFAULT 'active' | Comment status              |
+| `parent_id`    | INT FK → comments.id, NULL                 | For nested comments         |
 
 ---
 
@@ -223,16 +236,14 @@ Associates likes of post or comment.
 - publish_date
 - target_type
 
-| Field            | Type                                          | Description          |
-|------------------|-----------------------------------------------|----------------------|
-| `like_id`        | INT PK                                        | Unique ID            |
-| `author_id`      | INT FK →  users.id                            | Who liked            |
-| `target_id`      | INT FK →  posts.id or INT FK →  comments.id   | Like to the id       |
-| `target_type`    | ENUM('post','comment')                        | Like to post/comment |
-| `like_type`      | ENUM('like','dislike')                        | Like or dislike      |
-| `publish_date`   | TIMESTAMP DEFAULT CURRENT_TIMESTAMP           | Like date            |
-
-
+| Field          | Type                                      | Description          |
+| -------------- | ----------------------------------------- | -------------------- |
+| `like_id`      | INT PK                                    | Unique ID            |
+| `author_id`    | INT FK → users.id                         | Who liked            |
+| `target_id`    | INT FK → posts.id or INT FK → comments.id | Like to the id       |
+| `target_type`  | ENUM('post','comment')                    | Like to post/comment |
+| `like_type`    | ENUM('like','dislike')                    | Like or dislike      |
+| `publish_date` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP       | Like date            |
 
 ### Additional tables
 
@@ -244,26 +255,25 @@ Relationship between posts and categories.
 - category_id
 - **PRIMARY KEY (post_id, category_id)**
 
-| Field            | Type                              | Description        |
-|------------------|-----------------------------------|--------------------|
-| `post_id`        | INT FK → posts.post_id            | Post ID            |
-| `category_id`    | INT FK → categories.category_id   | Category liked     |
+| Field         | Type                            | Description    |
+| ------------- | ------------------------------- | -------------- |
+| `post_id`     | INT FK → posts.post_id          | Post ID        |
+| `category_id` | INT FK → categories.category_id | Category liked |
 
 #### 2. favorites
 
-Stores posts added to "favorite" category 
+Stores posts added to "favorite" category
 
 - post_id
 - owner_id
 - add_date
 - **PRIMARY KEY (post_id, owner_id)**
 
-| Field          | Type                                 | Description                       |
-|----------------|--------------------------------------|-----------------------------------|
-| `owner_id`     | INT FK → users.user_id               | ID of the user who added the post |
-| `post_id`      | INT FK → posts.post_id               | Post ID                           |
-| `add_date`     | TIMESTAMP DEFAULT CURRENT_TIMESTAMP  | Addition time                     |
-
+| Field      | Type                                | Description                       |
+| ---------- | ----------------------------------- | --------------------------------- |
+| `owner_id` | INT FK → users.user_id              | ID of the user who added the post |
+| `post_id`  | INT FK → posts.post_id              | Post ID                           |
+| `add_date` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP | Addition time                     |
 
 ### Connections
 
@@ -276,37 +286,43 @@ Stores posts added to "favorite" category
 - comments 1 — M likes
 - favorites M — M posts (with favorites)
 
-*1 — M (one-to-many)   → one record in one table can be related to several records in another*  
+_1 — M (one-to-many) → one record in one table can be related to several records in another_
 
-*M — M (many-to-many)  → multiple records in one table can be related to multiple records in another*
+_M — M (many-to-many) → multiple records in one table can be related to multiple records in another_
 
 ---
 
 ## Installation and Running
 
 1. Clone the repository
+
 ```bash
 git clone <repo>
 cd <repo>
 ```
+
 2. Install dependencies
+
 ```bash
 npm install
 ```
+
 3. Create `.env` (see below) and set up database
 4. Run the server
+
 ```bash
 npm start
 # or
 node index.js
 ```
+
 5. Admin panel available at `http://localhost:3001/admin` (if PORT=3001)
 
 ---
 
 ## Environment Variables
 
-`````.env
+````.env
   # SERVER_PORT=yourtPort
 
   # Secret for user sessions (use any long random string)
@@ -325,7 +341,7 @@ node index.js
   MAIL_PASS=yourAppPasswordOrToken
 ```
 
---- 
+---
 
 ## API Endpoints (summary)
 
@@ -364,7 +380,7 @@ node index.js
 - `DELETE /api/categories/:id` — delete category
 
 ### Comments
-- `GET /api/posts/:id/comments`— get comments under a post 
+- `GET /api/posts/:id/comments`— get comments under a post
 - `GET /api/comments/:id`— get comment
 - `POST /api/posts/:id/comments` — create comment
 - `PATCH /api/comments/:id` — update comment
@@ -383,8 +399,9 @@ node index.js
 ---
 
 ## Conclusion
-This document serves as a full documentation base for USOF, describing CBL progress, architecture, and key algorithms. 
+This document serves as a full documentation base for USOF, describing CBL progress, architecture, and key algorithms.
 
---- 
-
+---
 *Author: Polina Tovstonoh*
+
+````

@@ -10,7 +10,7 @@ class User {
         return(user);
     }
 
-    async create_user(login, hash, name, email, role='user') {
+    async create_user(login, hash, name='', email, role='user') {
         const [user_id] = await this.db('users').insert({
             login,
             password_hash: hash,
@@ -88,7 +88,8 @@ class User {
             .update({ is_email_confirmed: false }); 
         }
     }
-    async create_new_user(login, hash, name, email, role='user') {
+   
+    async create_new_user(login, hash, name='', email, role='user') {
         const [user_id] = await this.db('users').insert({
             login,
             password_hash: hash,
