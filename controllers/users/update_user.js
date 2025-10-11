@@ -23,7 +23,6 @@ async function handleUpdate(req, res, db, jwt, User) {
         }
 
         //func update(field, value)
-<<<<<<< HEAD
         await moduleUser.update_user(user_id, update, need_email_conf);
         await sendEmail(email, link,
             'Confirm new email adress',
@@ -33,24 +32,6 @@ async function handleUpdate(req, res, db, jwt, User) {
         const newUser = await moduleUser.find_by_id(user_id);
          res.json({
             message: "Email is sent",
-=======
-        
-        await moduleUser.update_user(user_id, update, need_email_conf);
-
-        const newUser = await moduleUser.find_by_id(user_id);
-        if (need_email_conf) {
-            await sendEmail(email, link,
-                'Confirm new email adress',
-                `Clik the link to confirm the new email ${link}`
-            );
-            res.json({
-                message: "Email is sent",
-                user: newUser
-            });
-        }
-
-         res.json({
->>>>>>> back_usof2.0/main
             user: newUser
         });
     } catch (err) {
