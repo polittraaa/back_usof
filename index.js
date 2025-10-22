@@ -10,6 +10,11 @@ import { Adapter, Database, Resource } from '@adminjs/sql'
 import session from 'express-session'
 import { makeNewUserHash } from './usof/new_user_hash.js'
 import { trimInputs } from './middlewares/trim_input.js'
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config()
 
@@ -33,7 +38,7 @@ const start = async () => {
   const admin = new AdminJS({
     resources: [
       makeNewUserHash(db),// extra for admin auth 
-      { resource: db.table('users') },
+      // { resource: db.table('users') },
       { resource: db.table('posts') },
       { resource: db.table('categories') },
       { resource: db.table('post_categories') },
@@ -63,7 +68,8 @@ const start = async () => {
       cookie: { secure: false },
     })
   )
-  app.use(express.static('public'));
+  // app.use(express.static('public'));
+  app.use("/public", express.static(path.join(__dirname, "public")));
 
   app.use('/api', routes)
 

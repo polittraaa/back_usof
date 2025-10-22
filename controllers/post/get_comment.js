@@ -1,7 +1,7 @@
 export async function getComments(req, res, db, Post) {
     const modulePost = new Post(db);
     const { post_id } = req.params;
-    console.log('in get post, post id ', post_id)
+    // console.log('in get comments, post id ', post_id)
     try {
         const role = req.userRole; // form middle
         const id = req.session?.userId; // for autor parameter

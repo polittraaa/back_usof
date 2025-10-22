@@ -2,7 +2,7 @@ export async function getPosts(req, res, db, Post) {
   const modulePost = new Post(db);
   try {
     const page = 1;
-    const limit = 10;
+    const limit = 5;
     const offset = (page - 1) * limit;
     
     const role = req.userRole; // form middle
