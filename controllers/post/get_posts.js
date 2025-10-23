@@ -1,16 +1,13 @@
 export async function getPosts(req, res, db, Post) {
   const modulePost = new Post(db);
   try {
-    const page = 1;
-    const limit = 5;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 5;
     const offset = (page - 1) * limit;
     
     const role = req.userRole; // form middle
     const id = req.session?.userId; // for autor parameter
     
-    // console.log('in get posts', req.userRole)
-    // console.log('in get post',id)
-
     const sort = req.query.sort || "rating";
     const order = req.query.order || "desc";
 

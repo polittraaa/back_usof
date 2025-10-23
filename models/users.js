@@ -16,7 +16,6 @@ class User {
             password_hash: hash,
             full_name: name,
             email,
-            picture: 'default.png',
             rating: 0,
             role: role, 
             created_at: new Date(),

@@ -222,18 +222,40 @@ class Post {
     });
   }
 
-  async new_like(post_id, id, like_type){
-     const [like_id] = await this.db('likes').insert({
-      author_id: id,
+  // async new_like(post_id, id, like_type){
+  //    const [like_id] = await this.db('likes').insert({
+  //     author_id: id,
+  //     target_id: post_id,
+  //     publish_date: new Date(),
+  //     like_type
+  //   });
+  //   const like = await this.db('likes')
+  //   .where({ like_id })
+  //   .first();
+  //   return like;
+  // }
+
+  async toggleLike(post_id, user_id, like = true) {
+  const existing = await this.db('likes')
+    .where({ author_id: user_id, target_id: post_id })
+    .first();
+
+  if (like) {
+    if (existing) return existing;
+    const [like_id] = await this.db('likes').insert({
+      author_id: user_id,
       target_id: post_id,
       publish_date: new Date(),
-      like_type
+      like_type: 'like'
     });
-    const like = await this.db('likes')
-    .where({ like_id })
-    .first();
-    return like;
+    return await this.db('likes').where({ like_id }).first();
+  } else {
+    if (existing) {
+      await this.db('likes').where({ author_id: user_id, target_id: post_id }).del();
+    }
+    return null;
   }
+}
 
   async update_post(post_id, updates){
     const { category, ...post_updates } = updates;
