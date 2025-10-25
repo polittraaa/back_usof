@@ -235,27 +235,37 @@ class Post {
   //   return like;
   // }
 
-  async toggleLike(post_id, user_id, like = true) {
-  const existing = await this.db('likes')
-    .where({ author_id: user_id, target_id: post_id })
-    .first();
+  async toggleLike(post_id, user_id, like = true, type) {
+    const existing = await this.db('likes')
+      .where({ author_id: user_id, target_id: post_id })
+      .first();
 
-  if (like) {
-    if (existing) return existing;
-    const [like_id] = await this.db('likes').insert({
-      author_id: user_id,
-      target_id: post_id,
-      publish_date: new Date(),
-      like_type: 'like'
-    });
-    return await this.db('likes').where({ like_id }).first();
-  } else {
     if (existing) {
-      await this.db('likes').where({ author_id: user_id, target_id: post_id }).del();
+      if (existing.like_type === type) {
+        // если тот же тип — удалить (аннулируем)
+        await this.db('likes')
+          .where({ like_id: existing.like_id })
+          .del();
+        return null;
+      } else {
+        // если другой тип — обновляем
+        await this.db('likes')
+          .where({ like_id: existing.like_id })
+          .update({ like_type: type });
+        return await this.db('likes').where({ like_id: existing.like_id }).first();
+      }
+    } else {
+      // если записи нет — создаем
+      const [like_id] = await this.db('likes').insert({
+        author_id: user_id,
+        target_id: post_id,
+        publish_date: new Date(),
+        like_type: type
+      });
+      return await this.db('likes').where({ like_id }).first();
     }
-    return null;
   }
-}
+
 
   async update_post(post_id, updates){
     const { category, ...post_updates } = updates;

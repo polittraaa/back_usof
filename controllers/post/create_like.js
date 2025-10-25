@@ -25,11 +25,11 @@ export async function handleLikes(req, res, db, Post) {
     if (!id) return res.status(401).json({ error: 'Not signed in' });
 
     if (type === 'like') {
-      const like = await modulePost.toggleLike(post_id, id, true);
+      const like = await modulePost.toggleLike(post_id, id, true, type);
       return res.json({ success: true, like });
-    } else if (type === 'unlike') {
-      await modulePost.toggleLike(post_id, id, false);
-      return res.json({ success: true });
+    } else if (type === 'dislike') {
+      const like = await modulePost.toggleLike(post_id, id, false, type);
+      return res.json({ success: true, like });
     }
   } catch (err) {
     console.error(err);
