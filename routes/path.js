@@ -25,6 +25,7 @@ import handleDelete from '../controllers/users/del_user.js';
 import { handleNewUser} from '../controllers/users/create_user.js';
 
 //posts
+import { searchPosts } from '../controllers/post/search_posts.js';
 import { getPosts } from '../controllers/post/get_posts.js';
 import { getPost } from '../controllers/post/get_post.js';
 import { getComments } from '../controllers/post/get_comment.js';
@@ -87,6 +88,7 @@ router.delete('/users/:user_id', requireLogin, (req, res) => handleDelete(req, r
 router.post('/users', requireLogin, roleCheck(db, Post), (req, res) => handleNewUser(req, res, db, bcrypt, User));
 
 //posts
+router.get('/posts/search', roleCheck(db, Post), (req, res) => searchPosts(req, res, db, Post));
 router.get('/posts', roleCheck(db, Post), (req, res) => getPosts(req, res, db, Post));
 router.get('/posts/:post_id', roleCheck(db, Post), (req, res) => getPost(req, res, db, Post));
 router.get('/posts/:post_id/comments', roleCheck(db, Post), (req, res) => getComments(req, res, db, Post));

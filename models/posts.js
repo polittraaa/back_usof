@@ -65,6 +65,49 @@ class Post {
     };
   }
 
+  async search_posts(limit, offset, role, userId, search = "") {
+
+    console.log('Searching posts with search string:', search);
+    let query = this.db('posts')
+        .select(
+            'posts.*',
+            this.db.raw("COUNT(CASE WHEN likes.like_type = 'like' THEN 1 END) as likes_count"),
+            this.db.raw("COUNT(CASE WHEN likes.like_type = 'dislike' THEN 1 END) as dislikes_count"),
+            this.db.raw("COUNT(CASE WHEN likes.like_type = 'like' THEN 1 END) - COUNT(CASE WHEN likes.like_type = 'dislike' THEN 1 END) as rating")
+        )
+        .leftJoin('likes', 'posts.post_id', 'likes.target_id')
+        .groupBy('posts.post_id');
+
+    // visibility logic (admin/user/guest)
+    if (userId) {
+        if (role !== 'admin') {
+            query = query.where(function() {
+                this.where('posts.post_status', 'active')
+                    .orWhere(function() {
+                        this.where('posts.post_status', 'inactive')
+                            .andWhere('posts.author_id', userId);
+                    });
+            });
+        }
+    } else {
+        query = query.where('posts.post_status', 'active');
+    }
+
+    // simple title search (optional)
+    if (search && search.trim() !== "") {
+        query = query.where('posts.title', 'like', `%${search}%`);
+    }
+
+    // you can choose how to sort, for now let's default by rating desc
+    query = query.orderBy('rating', 'desc');
+
+    const posts = await query.limit(limit).offset(offset);
+
+    return { 
+        posts: posts 
+    };
+  }
+
   async count(role, userId) {
     const q = this.db('posts');
     if (role === 'guest') q.where('post_status', 'active');
