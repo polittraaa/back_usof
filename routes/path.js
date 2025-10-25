@@ -101,7 +101,7 @@ router.delete('/posts/:post_id/like', requireLogin, roleCheck(db, Post), (req, r
 
 //categories
 router.get('/categories', (req, res) => getCat(req, res, db, Cat));
-router.get('/categories/:category_id', (req, res) => getCatId(req, res, db, Cat));
+router.get('/categories/:category_id', requireLogin, (req, res) => getCatId(req, res, db, Cat));
 router.get('/categories/:category_id/posts', (req, res) => getCatIdPost(req, res, db, Cat));
 router.post('/categories', requireLogin, adminCheck(db, User), (req, res) => handleCreatetCat(req, res, db, Cat));
 router.patch('/categories/:category_id', requireLogin, adminCheck(db, User), (req, res) => handleEditCat(req, res, db, Cat));
