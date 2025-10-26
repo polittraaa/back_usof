@@ -313,20 +313,27 @@ class Post {
   async update_post(post_id, updates){
     const { category, ...post_updates } = updates;
 
-    if (Object.keys(post_updates).length > 0){
+    // обновляем сам пост
+    if (Object.keys(post_updates).length > 0) {
       await this.db('posts')
         .where({ post_id })
         .update(post_updates);
     }
-    if (category !== undefined ){
-        await this.db('post_categories')
+
+    // если категории переданы
+    if (category && Array.isArray(category)) {
+      // сначала очищаем старые связи
+      await this.db('post_categories')
         .where({ post_id })
         .del();
 
-      await this.db('post_categories').insert({
+      // затем добавляем новые (массив объектов)
+      const newLinks = category.map(cat_id => ({
         post_id,
-        category_id: category
-      });
+        category_id: cat_id
+      }));
+
+      await this.db('post_categories').insert(newLinks);
     }
   }
 
